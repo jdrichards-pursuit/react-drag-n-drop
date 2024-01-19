@@ -1,6 +1,5 @@
 import { useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
-import { ItemTypes } from "./ItemTypes.js";
 
 const style = {
   border: "1px dashed gray",
@@ -61,7 +60,7 @@ const Card = ({ id, text, index, moveCard }) => {
   });
 
   const [{ isDragging }, drag] = useDrag({
-    type: ItemTypes.CARD,
+    type: "card",
     item: () => {
       return { id, index };
     },
