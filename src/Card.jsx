@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { ItemTypes } from "./ItemTypes.js";
+
 const style = {
   border: "1px dashed gray",
   padding: "0.5rem 1rem",
@@ -8,17 +9,19 @@ const style = {
   backgroundColor: "white",
   cursor: "move",
 };
-export const Card = ({ id, text, index, moveCard }) => {
-  const ref = useRef(null);
+
+const Card = ({ id, text, index, moveCard }) => {
+  const rectangleRef = useRef(null);
+
   const [{ handlerId }, drop] = useDrop({
-    accept: ItemTypes.CARD,
+    accept: "card",
     collect(monitor) {
       return {
         handlerId: monitor.getHandlerId(),
       };
     },
     hover(item, monitor) {
-      if (!ref.current) {
+      if (!rectangleRef.current) {
         return;
       }
       const dragIndex = item.index;
@@ -28,7 +31,7 @@ export const Card = ({ id, text, index, moveCard }) => {
         return;
       }
       // Determine rectangle on screen
-      const hoverBoundingRect = ref.current?.getBoundingClientRect();
+      const hoverBoundingRect = rectangleRef.current?.getBoundingClientRect();
       // Get vertical middle
       const hoverMiddleY =
         (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
@@ -56,6 +59,7 @@ export const Card = ({ id, text, index, moveCard }) => {
       item.index = hoverIndex;
     },
   });
+
   const [{ isDragging }, drag] = useDrag({
     type: ItemTypes.CARD,
     item: () => {
@@ -65,11 +69,20 @@ export const Card = ({ id, text, index, moveCard }) => {
       isDragging: monitor.isDragging(),
     }),
   });
+
   const opacity = isDragging ? 0 : 1;
-  drag(drop(ref));
+
+  drag(drop(rectangleRef));
+
   return (
-    <div ref={ref} style={{ ...style, opacity }} data-handler-id={handlerId}>
+    <div
+      ref={rectangleRef}
+      style={{ ...style, opacity }}
+      data-handler-id={handlerId}
+    >
       {text}
     </div>
   );
 };
+
+export default Card;
